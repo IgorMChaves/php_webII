@@ -1,17 +1,24 @@
 <form method="POST" action="?class=Form&method=salvar">
+  <input type="hidden" name="id" value="{id}" />
   <div>
     <label for="paciente">Paciente: </label>
-    <input type="varchar" name="paciente" id="paciente" required />
+    <input type="text" name="paciente" id="paciente" required value="{paciente}" />
   </div>
   <div>
-      <label for="idade">Idade: </label>
-      <input type="tinyint" name="idade" id="idade" required />
+    <label for="idade">Idade: </label>
+    <textarea name="idade" id="idade" required>{idade}</textarea>
   </div>
   <div>
-      <label for="diagnostico">Diagnostico: </label>
-      <input type="text" name="diagnostico" id="diagnostico" required />
+    <label for="diagnostico">Diagnostico: </label>
+    <input
+      type="number"
+      name="diagnostico"
+      id="diagnostico"
+      required
+      value="{diagnostico}"
+    />
   </div>
   <div>
-      <button type="submit">Salvar</button>
-    </div>
+    <button type="submit">Salvar</button>
+  </div>
 </form>

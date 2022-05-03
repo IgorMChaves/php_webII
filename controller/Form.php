@@ -1,4 +1,3 @@
-<  
 <?php
 class Form
 {
@@ -10,6 +9,10 @@ class Form
   public function controller()
   {
     $form = new Template("view/form.html");
+    $form->set("id", "");
+    $form->set("paciente", "");
+    $form->set("idade", "");
+    $form->set("diagnostico", "");
     $this->message = $form->saida();
   }
   public function salvar()
@@ -21,7 +24,30 @@ class Form
         $paciente = $conexao->quote($_POST['paciente']);
         $idade = $conexao->quote($_POST['idade']);
         $diagnostico = $conexao->quote($_POST['diagnostico']);
-        $resultado = $consultorio->insert("paciente, idade, diagnostico", "$paciente,$idade,$diagnostico");
+        if (empty($_POST["id"])) {
+          $consultorio->insert("paciente, idade, diagnostico", "$paciente,$idade,$diagnostico");
+        } else {
+          $id = $conexao->quote($_POST['id']);
+          $consultorio->update("paciente=$paciente,idade=$idade,diagnostico=$diagnostico", "id=$id");
+        }
+      } catch (Exception $e) {
+        echo $e->getMessage();
+      }
+    }
+  }
+  public function editar()
+  {
+    if (isset($_GET['id'])) {
+      try {
+        $conexao = Transaction::get();
+        $id = $conexao->quote($_GET['id']);
+        $consultorio = new Crud('consultorio');
+        $resultado = $consultorio->select("*", "id=$id");
+        $form = new Template("view/form.html");
+        foreach ($resultado[0] as $cod => $valor) {
+          $form->set($cod, $valor);
+        }
+        $this->message = $form->saida();
       } catch (Exception $e) {
         echo $e->getMessage();
       }
