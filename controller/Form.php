@@ -2,6 +2,7 @@
 class Form
 {
   private $message = "";
+  private $error = "";
   public function __construct()
   {
     Transaction::open();
@@ -30,8 +31,11 @@ class Form
           $id = $conexao->quote($_POST['id']);
           $consultorio->update("paciente=$paciente,idade=$idade,diagnostico=$diagnostico", "id=$id");
         }
+        $this->message = $consultorio->getMessage();
+        $this->error = $consultorio->getError();
       } catch (Exception $e) {
-        echo $e->getMessage();
+        $this->message = $e->getMessage();
+        $this->error = true;
       }
     }
   }
@@ -43,19 +47,37 @@ class Form
         $id = $conexao->quote($_GET['id']);
         $consultorio = new Crud('consultorio');
         $resultado = $consultorio->select("*", "id=$id");
-        $form = new Template("view/form.html");
-        foreach ($resultado[0] as $cod => $valor) {
-          $form->set($cod, $valor);
+        if (!$consultorio->getError()) {
+          $form = new Template("view/form.html");
+          foreach ($resultado[0] as $cod => $valor) {
+            $form->set($cod, $valor);
+          }
+          $this->message = $form->saida();
+        } else {
+          $this->message = $consultorio->getMessage();
+          $this->error = true;
         }
-        $this->message = $form->saida();
       } catch (Exception $e) {
-        echo $e->getMessage();
+        $this->message = $e->getMessage();
+        $this->error = true;
       }
     }
   }
   public function getMessage()
   {
-    return $this->message;
+    if (is_string($this->error)) {
+      return $this->message;
+    } else {
+      $msg = new Template("view/msg.html");
+      if ($this->error) {
+        $msg->set("cor", "danger");
+      } else {
+        $msg->set("cor", "success");
+      }
+      $msg->set("msg", $this->message);
+      $msg->set("uri", "?class=Tabela");
+      return $msg->saida();
+    }
   }
   public function __destruct()
   {
