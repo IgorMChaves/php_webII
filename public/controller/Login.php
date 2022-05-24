@@ -1,0 +1,74 @@
+<?php
+class Login
+{
+    private $message = "";
+    private $error = "";
+    public function __construc()
+    {
+        Transaction::open();
+    }
+    
+    public function controller()
+    {
+        $form = new Template("public/view/login.html");
+        $this->message = $form->saida();
+    }
+
+    public function salvar()
+    {
+        if (isset($_POST["email"]) && isset($_POST["senha"])){
+            try{
+                $conexao = Transaction::get();
+                $email = $conexao->quote($_POST["email"]);
+                $senha = $conexao->quote(sha1($_POST["senha"]));
+                $usuario = new Crud("usuario");
+                $usuario= $crud->select(
+                    "*",
+                    "email={$email} AND senha={$senha}"
+                );
+                if (!crud->getError()) {
+                    Session::startSesssion();
+                    Session::setValue("id", $usuario[0] ["id"]);
+                    Session::setValue("id", $usuario[0] ["nome"]);
+                    header("Location:/modelo/restrita.php");
+                }
+                $this->message = $consultorio->getMessage();
+                $this->message = "Login ou senha inválidos!";
+                $this->error = $consultorio->getError();
+            } catch (Exception $e) {
+                $this->message = "Ocorreu um erro!" . $e->getMessage();
+                $this->error = true;
+            }
+        }else{
+            $this->message = "Preencha todos os campos! ";
+            $this->error = TRUE;
+        }
+    }
+    
+    public function getMessage()
+    {
+        if (is_string($this->error)) {
+            return $this->message;
+        } else {
+            $msg = new Template("view/msg.html");
+            if ($this->error) {
+              $msg->set("cor", "danger");
+            } else {
+              $msg->set("cor", "success");
+            }
+            $msg->set("msg", $this->message);
+            $msg->set("uri", "?class=Login");
+            return $msg->saida();
+        }
+    }
+
+    public function getError()
+    {
+        return $this->error;
+    }
+        
+    public function __destruct()
+    {
+        Transaction::close();
+    }
+}
