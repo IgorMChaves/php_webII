@@ -3,7 +3,7 @@ class Cadastrar
 {
     private $message = "";
     private $error = "";
-    public function __construc()
+    public function __construct()
     {
         Transaction::open();
     }
@@ -27,8 +27,8 @@ class Cadastrar
                     "nome,email,senha",
                     "{$nome},{$email},{$senha}"
                 );
-                $this->message = $consultorio->getMessage();
-                $this->error = $consultorio->getError();
+                $this->message = $usuario->getMessage();
+                $this->error = $usuario->getError();
             } catch (Exception $e) {
                 $this->message = "Ocorreu um erro!" . $e->getMessage();
                 $this->error = true;
@@ -44,7 +44,7 @@ class Cadastrar
         if (is_string($this->error)) {
             return $this->message;
         } else {
-            $msg = new Template("view/msg.html");
+            $msg = new Template("shared/view/msg.html");
             if ($this->error) {
               $msg->set("cor", "danger");
             } else {

@@ -1,29 +1,40 @@
 <?php
 // auto load
-spl_autoload_extensions('.php');
+spl_autoload_extensions(".php");
 function classLoader($class)
 {
-  $nomeArquivo = $class . '.php';
-  $pastas = array('controller', 'model');
+  $nomeArquivo = $class . ".php";
+  $pastas = array(
+    "shared/controller",
+    "shared/model",
+    "public/controller",
+    "public/model"
+  );
   foreach ($pastas as $pasta) {
     $arquivo = "{$pasta}/{$nomeArquivo}";
     if (file_exists($arquivo)) {
-      require_once($arquivo);
+      require_once $arquivo;
     }
-  }
+ }
 }
-spl_autoload_register('classLoader');
+
+spl_autoload_register("classLoader");
+
+Session::startSession();
+Session::freeSession();
+
 // Front Controller
 class Aplicacao
 {
-  private static $app = "/Igor";
-  public static function run()
+  static private $app = "/Igor";
+  static public function run()
   {
-    $layout = new Template('view/layout.html');
+    $layout = new Template("public/view/layout.html");
+    $layout->set("uri", self::$app);
     if (isset($_GET["class"])) {
       $class = $_GET["class"];
     } else {
-      $class = "Inicio";
+      $class = "Login";
     }
     if (isset($_GET["method"])) {
       $method = $_GET["method"];
@@ -31,20 +42,19 @@ class Aplicacao
       $method = "";
     }
     if (class_exists($class)) {
-      $pagina = new $class();
-      if (method_exists($pagina, $method)) {
-        $pagina->$method();
-      } else {
-        $pagina->controller();
-      }
-      $layout->set("uri", self::$app);
-      $layout->set('conteudo', $pagina->getMessage());
+      $pagina = new $class;
+        if (method_exists($pagina, $method)) {
+          $pagina->$method();
+        } else {
+          $pagina->controller();
+        }
+        $layout->set("conteudo", $pagina->getMessage());
     }
     echo $layout->saida();
   }
 }
-Aplicacao::run();
 
+Aplicacao::run();   
 
 
 
