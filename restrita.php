@@ -7,7 +7,7 @@ function classLoader($class)
   $pastas = array(
     "shared/controller",
     "shared/model",
-    "public/controller",
+    "restrict/controller",
     "public/model"
   );
   foreach ($pastas as $pasta) {

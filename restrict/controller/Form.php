@@ -9,7 +9,7 @@ class Form
   }
   public function controller()
   {
-    $form = new Template("view/form.html");
+    $form = new Template("restrict/view/form.html");
     $form->set("id", "");
     $form->set("paciente", "");
     $form->set("idade", "");
@@ -68,7 +68,7 @@ class Form
     if (is_string($this->error)) {
       return $this->message;
     } else {
-      $msg = new Template("view/msg.html");
+      $msg = new Template("shared/view/msg.html");
       if ($this->error) {
         $msg->set("cor", "danger");
       } else {

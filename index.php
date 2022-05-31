@@ -55,6 +55,3 @@ class Aplicacao
 }
 
 Aplicacao::run();   
-
-
-
