@@ -48,7 +48,7 @@ class Form
         $consultorio = new Crud('consultorio');
         $resultado = $consultorio->select("*", "id=$id");
         if (!$consultorio->getError()) {
-          $form = new Template("view/form.html");
+          $form = new Template("restrict/view/form.html");
           foreach ($resultado[0] as $cod => $valor) {
             $form->set($cod, $valor);
           }
